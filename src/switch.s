@@ -24,17 +24,13 @@
 switch_to_current:
                                       /* Switch to the current task's stack. */
     ldr   r0, =currentSP              /* Load r0 with the address for currentSP */
-    ldr   r1, =cs
-    stmfd sp!, {r0-r1}
-    //ldr   sp, [r0]                    /* Load sp with the value stored at the address */
+    ldr   sp, [r0]                    /* Load sp with the value stored at the address */
                                       /* sp now points to the task's stack. */
 
                                       /* Set SPSR to the CPSR for the task. */
     ldmfd sp!, {r0}                   /* Pop the first value from the stack into r0. */
                                       /* That value was the CPSR for the task. */
     msr   spsr_cxsf, r0               /* Load SPSR with that CPSR value in r0. */
-
-    ldmfd sp!, {r0}
 
                                       /* Run task. */
     ldmfd sp!, {r0-r12, lr, pc}^      /* Pop the rest of the stack setting regs and pc for the task */
