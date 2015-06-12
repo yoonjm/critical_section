@@ -1,0 +1,715 @@
+ARM GAS  /tmp/ccQ9uJCa.s 			page 1
+
+
+   1              		.cpu arm7tdmi
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1	@ Tag_ABI_FP_denormal
+   4              		.eabi_attribute 21, 1	@ Tag_ABI_FP_exceptions
+   5              		.eabi_attribute 23, 3	@ Tag_ABI_FP_number_model
+   6              		.eabi_attribute 24, 1	@ Tag_ABI_align8_needed
+   7              		.eabi_attribute 25, 1	@ Tag_ABI_align8_preserved
+   8              		.eabi_attribute 26, 1	@ Tag_ABI_enum_size
+   9              		.eabi_attribute 30, 6	@ Tag_ABI_optimization_goals
+  10              		.eabi_attribute 34, 0	@ Tag_CPU_unaligned_access
+  11              		.eabi_attribute 18, 4	@ Tag_ABI_PCS_wchar_t
+  12              		.file	"critical_section.c"
+  13              	@ GNU C (GNU Tools for ARM Embedded Processors) version 4.8.4 20140725 (release) [ARM/embedded-4_8-
+  14              	@	compiled by GNU C version 4.7.4, GMP version 4.3.2, MPFR version 2.4.2, MPC version 0.8.1
+  15              	@ GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+  16              	@ options passed:  -I . -I ./inc
+  17              	@ -iprefix /opt/gcc-arm-none-eabi-4_8-2014q3/bin/../lib/gcc/arm-none-eabi/4.8.4/
+  18              	@ -isysroot /opt/gcc-arm-none-eabi-4_8-2014q3/bin/../arm-none-eabi
+  19              	@ -MD src/critical_section.d -MF .dep/critical_section.o.d -MP
+  20              	@ -MQ src/critical_section.o -D__USES_INITFINI__ -D DEBUG=1
+  21              	@ src/critical_section.c -mcpu=arm7tdmi -marm
+  22              	@ -auxbase-strip src/critical_section.o -gdwarf-2 -O0 -Wall
+  23              	@ -Wstrict-prototypes -fomit-frame-pointer -fverbose-asm
+  24              	@ options enabled:  -faggressive-loop-optimizations -fauto-inc-dec
+  25              	@ -fbranch-count-reg -fcommon -fdelete-null-pointer-checks -fdwarf2-cfi-asm
+  26              	@ -fearly-inlining -feliminate-unused-debug-types -ffunction-cse -fgcse-lm
+  27              	@ -fgnu-runtime -fgnu-unique -fident -finline-atomics -fira-hoist-pressure
+  28              	@ -fira-share-save-slots -fira-share-spill-slots -fivopts
+  29              	@ -fkeep-static-consts -fleading-underscore -fmath-errno
+  30              	@ -fmerge-debug-strings -fmove-loop-invariants -fomit-frame-pointer
+  31              	@ -fpeephole -fprefetch-loop-arrays -freg-struct-return
+  32              	@ -fsched-critical-path-heuristic -fsched-dep-count-heuristic
+  33              	@ -fsched-group-heuristic -fsched-interblock -fsched-last-insn-heuristic
+  34              	@ -fsched-rank-heuristic -fsched-spec -fsched-spec-insn-heuristic
+  35              	@ -fsched-stalled-insns-dep -fshow-column -fsigned-zeros
+  36              	@ -fsplit-ivs-in-unroller -fstrict-volatile-bitfields -fsync-libcalls
+  37              	@ -ftrapping-math -ftree-coalesce-vars -ftree-cselim -ftree-forwprop
+  38              	@ -ftree-loop-if-convert -ftree-loop-im -ftree-loop-ivcanon
+  39              	@ -ftree-loop-optimize -ftree-parallelize-loops= -ftree-phiprop -ftree-pta
+  40              	@ -ftree-reassoc -ftree-scev-cprop -ftree-slp-vectorize
+  41              	@ -ftree-vect-loop-version -funit-at-a-time -fverbose-asm
+  42              	@ -fzero-initialized-in-bss -marm -mlittle-endian
+  43              	@ -mpic-data-is-text-relative -msched-prolog -mthumb-interwork
+  44              	@ -mvectorize-with-neon-quad
+  45              	
+  46              		.text
+  47              	.Ltext0:
+  48              		.cfi_sections	.debug_frame
+  49              		.global	SUCCESS
+  50              		.section	.rodata
+  51              		.align	2
+  52              		.type	SUCCESS, %object
+  53              		.size	SUCCESS, 4
+  54              	SUCCESS:
+  55 0000 00000000 		.space	4
+  56              		.global	BUSY
+  57              		.align	2
+ARM GAS  /tmp/ccQ9uJCa.s 			page 2
+
+
+  58              		.type	BUSY, %object
+  59              		.size	BUSY, 4
+  60              	BUSY:
+  61 0004 01000000 		.word	1
+  62              		.global	RESOURCE
+  63              		.align	2
+  64              		.type	RESOURCE, %object
+  65              		.size	RESOURCE, 4
+  66              	RESOURCE:
+  67 0008 02000000 		.word	2
+  68              		.text
+  69              		.align	2
+  70              		.global	CreateCriticalSection
+  71              		.type	CreateCriticalSection, %function
+  72              	CreateCriticalSection:
+  73              	.LFB0:
+  74              		.file 1 "src/critical_section.c"
+   1:src/critical_section.c **** #include "critical_section.h"
+   2:src/critical_section.c **** 
+   3:src/critical_section.c **** const int SUCCESS   =   0;
+   4:src/critical_section.c **** const int BUSY      =   1;
+   5:src/critical_section.c **** const int RESOURCE  =   2;
+   6:src/critical_section.c **** 
+   7:src/critical_section.c **** int CreateCriticalSection(CriticalSection_t cs)
+   8:src/critical_section.c **** {
+  75              		.loc 1 8 0
+  76              		.cfi_startproc
+  77              		@ Function supports interworking.
+  78              		@ args = 0, pretend = 0, frame = 16
+  79              		@ frame_needed = 0, uses_anonymous_args = 0
+  80              		@ link register save eliminated.
+  81 0000 10D04DE2 		sub	sp, sp, #16	@,,
+  82              	.LCFI0:
+  83              		.cfi_def_cfa_offset 16
+  84 0004 04008DE5 		str	r0, [sp, #4]	@ cs, cs
+   9:src/critical_section.c ****     cs = SUCCESS;
+  85              		.loc 1 9 0
+  86 0008 0030A0E3 		mov	r3, #0	@ tmp112,
+  87 000c 0C308DE5 		str	r3, [sp, #12]	@ tmp112, cs
+  10:src/critical_section.c ****     return 0;
+  88              		.loc 1 10 0
+  89 0010 0030A0E3 		mov	r3, #0	@ D.4110,
+  11:src/critical_section.c **** }
+  90              		.loc 1 11 0
+  91 0014 0300A0E1 		mov	r0, r3	@, <retval>
+  92 0018 10D08DE2 		add	sp, sp, #16	@,,
+  93              		@ sp needed	@
+  94 001c 1EFF2FE1 		bx	lr	@
+  95              		.cfi_endproc
+  96              	.LFE0:
+  97              		.size	CreateCriticalSection, .-CreateCriticalSection
+  98              		.align	2
+  99              		.global	DeleteCriticalSection
+ 100              		.type	DeleteCriticalSection, %function
+ 101              	DeleteCriticalSection:
+ 102              	.LFB1:
+  12:src/critical_section.c **** 
+ARM GAS  /tmp/ccQ9uJCa.s 			page 3
+
+
+  13:src/critical_section.c **** int DeleteCriticalSection(CriticalSection_t cs)
+  14:src/critical_section.c **** {
+ 103              		.loc 1 14 0
+ 104              		.cfi_startproc
+ 105              		@ Function supports interworking.
+ 106              		@ args = 0, pretend = 0, frame = 8
+ 107              		@ frame_needed = 0, uses_anonymous_args = 0
+ 108              		@ link register save eliminated.
+ 109 0020 08D04DE2 		sub	sp, sp, #8	@,,
+ 110              	.LCFI1:
+ 111              		.cfi_def_cfa_offset 8
+ 112 0024 04008DE5 		str	r0, [sp, #4]	@ cs, cs
+  15:src/critical_section.c ****     return 0;
+ 113              		.loc 1 15 0
+ 114 0028 0030A0E3 		mov	r3, #0	@ D.4111,
+  16:src/critical_section.c **** }
+ 115              		.loc 1 16 0
+ 116 002c 0300A0E1 		mov	r0, r3	@, <retval>
+ 117 0030 08D08DE2 		add	sp, sp, #8	@,,
+ 118              		@ sp needed	@
+ 119 0034 1EFF2FE1 		bx	lr	@
+ 120              		.cfi_endproc
+ 121              	.LFE1:
+ 122              		.size	DeleteCriticalSection, .-DeleteCriticalSection
+ 123              		.align	2
+ 124              		.global	EnterCriticalSection
+ 125              		.type	EnterCriticalSection, %function
+ 126              	EnterCriticalSection:
+ 127              	.LFB2:
+  17:src/critical_section.c **** 
+  18:src/critical_section.c **** int EnterCriticalSection(CriticalSection_t cs)
+  19:src/critical_section.c **** {
+ 128              		.loc 1 19 0
+ 129              		.cfi_startproc
+ 130              		@ Function supports interworking.
+ 131              		@ args = 0, pretend = 0, frame = 8
+ 132              		@ frame_needed = 0, uses_anonymous_args = 0
+ 133              		@ link register save eliminated.
+ 134 0038 08D04DE2 		sub	sp, sp, #8	@,,
+ 135              	.LCFI2:
+ 136              		.cfi_def_cfa_offset 8
+ 137 003c 04008DE5 		str	r0, [sp, #4]	@ cs, cs
+  20:src/critical_section.c ****     return 0;
+ 138              		.loc 1 20 0
+ 139 0040 0030A0E3 		mov	r3, #0	@ D.4112,
+  21:src/critical_section.c **** }
+ 140              		.loc 1 21 0
+ 141 0044 0300A0E1 		mov	r0, r3	@, <retval>
+ 142 0048 08D08DE2 		add	sp, sp, #8	@,,
+ 143              		@ sp needed	@
+ 144 004c 1EFF2FE1 		bx	lr	@
+ 145              		.cfi_endproc
+ 146              	.LFE2:
+ 147              		.size	EnterCriticalSection, .-EnterCriticalSection
+ 148              		.align	2
+ 149              		.global	LeaveCriticalSection
+ 150              		.type	LeaveCriticalSection, %function
+ARM GAS  /tmp/ccQ9uJCa.s 			page 4
+
+
+ 151              	LeaveCriticalSection:
+ 152              	.LFB3:
+  22:src/critical_section.c **** 
+  23:src/critical_section.c **** int LeaveCriticalSection(CriticalSection_t cs)
+  24:src/critical_section.c **** {
+ 153              		.loc 1 24 0
+ 154              		.cfi_startproc
+ 155              		@ Function supports interworking.
+ 156              		@ args = 0, pretend = 0, frame = 8
+ 157              		@ frame_needed = 0, uses_anonymous_args = 0
+ 158              		@ link register save eliminated.
+ 159 0050 08D04DE2 		sub	sp, sp, #8	@,,
+ 160              	.LCFI3:
+ 161              		.cfi_def_cfa_offset 8
+ 162 0054 04008DE5 		str	r0, [sp, #4]	@ cs, cs
+  25:src/critical_section.c ****     return 0;
+ 163              		.loc 1 25 0
+ 164 0058 0030A0E3 		mov	r3, #0	@ D.4113,
+  26:src/critical_section.c **** }
+ 165              		.loc 1 26 0
+ 166 005c 0300A0E1 		mov	r0, r3	@, <retval>
+ 167 0060 08D08DE2 		add	sp, sp, #8	@,,
+ 168              		@ sp needed	@
+ 169 0064 1EFF2FE1 		bx	lr	@
+ 170              		.cfi_endproc
+ 171              	.LFE3:
+ 172              		.size	LeaveCriticalSection, .-LeaveCriticalSection
+ 173              		.align	2
+ 174              		.global	QueryEnterCriticalSection
+ 175              		.type	QueryEnterCriticalSection, %function
+ 176              	QueryEnterCriticalSection:
+ 177              	.LFB4:
+  27:src/critical_section.c **** 
+  28:src/critical_section.c **** int QueryEnterCriticalSection(CriticalSection_t cs)
+  29:src/critical_section.c **** {
+ 178              		.loc 1 29 0
+ 179              		.cfi_startproc
+ 180              		@ Function supports interworking.
+ 181              		@ args = 0, pretend = 0, frame = 8
+ 182              		@ frame_needed = 0, uses_anonymous_args = 0
+ 183              		@ link register save eliminated.
+ 184 0068 08D04DE2 		sub	sp, sp, #8	@,,
+ 185              	.LCFI4:
+ 186              		.cfi_def_cfa_offset 8
+ 187 006c 04008DE5 		str	r0, [sp, #4]	@ cs, cs
+  30:src/critical_section.c ****     return 0;
+ 188              		.loc 1 30 0
+ 189 0070 0030A0E3 		mov	r3, #0	@ D.4114,
+  31:src/critical_section.c **** }
+ 190              		.loc 1 31 0
+ 191 0074 0300A0E1 		mov	r0, r3	@, <retval>
+ 192 0078 08D08DE2 		add	sp, sp, #8	@,,
+ 193              		@ sp needed	@
+ 194 007c 1EFF2FE1 		bx	lr	@
+ 195              		.cfi_endproc
+ 196              	.LFE4:
+ 197              		.size	QueryEnterCriticalSection, .-QueryEnterCriticalSection
+ARM GAS  /tmp/ccQ9uJCa.s 			page 5
+
+
+ 198              	.Letext0:
+ 199              		.file 2 "./inc/critical_section.h"
+ 200              		.section	.debug_info,"",%progbits
+ 201              	.Ldebug_info0:
+ 202 0000 4B010000 		.4byte	0x14b
+ 203 0004 0200     		.2byte	0x2
+ 204 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 205 000a 04       		.byte	0x4
+ 206 000b 01       		.uleb128 0x1
+ 207 000c CB000000 		.4byte	.LASF8
+ 208 0010 01       		.byte	0x1
+ 209 0011 2B000000 		.4byte	.LASF9
+ 210 0015 66000000 		.4byte	.LASF10
+ 211 0019 00000000 		.4byte	.Ltext0
+ 212 001d 80000000 		.4byte	.Letext0
+ 213 0021 00000000 		.4byte	.Ldebug_line0
+ 214 0025 02       		.uleb128 0x2
+ 215 0026 A4000000 		.4byte	.LASF11
+ 216 002a 02       		.byte	0x2
+ 217 002b 0A       		.byte	0xa
+ 218 002c 30000000 		.4byte	0x30
+ 219 0030 03       		.uleb128 0x3
+ 220 0031 04       		.byte	0x4
+ 221 0032 05       		.byte	0x5
+ 222 0033 696E7400 		.ascii	"int\000"
+ 223 0037 04       		.uleb128 0x4
+ 224 0038 01       		.byte	0x1
+ 225 0039 15000000 		.4byte	.LASF0
+ 226 003d 01       		.byte	0x1
+ 227 003e 07       		.byte	0x7
+ 228 003f 01       		.byte	0x1
+ 229 0040 30000000 		.4byte	0x30
+ 230 0044 00000000 		.4byte	.LFB0
+ 231 0048 20000000 		.4byte	.LFE0
+ 232 004c 00000000 		.4byte	.LLST0
+ 233 0050 01       		.byte	0x1
+ 234 0051 63000000 		.4byte	0x63
+ 235 0055 05       		.uleb128 0x5
+ 236 0056 637300   		.ascii	"cs\000"
+ 237 0059 01       		.byte	0x1
+ 238 005a 07       		.byte	0x7
+ 239 005b 25000000 		.4byte	0x25
+ 240 005f 02       		.byte	0x2
+ 241 0060 91       		.byte	0x91
+ 242 0061 74       		.sleb128 -12
+ 243 0062 00       		.byte	0
+ 244 0063 04       		.uleb128 0x4
+ 245 0064 01       		.byte	0x1
+ 246 0065 42000000 		.4byte	.LASF1
+ 247 0069 01       		.byte	0x1
+ 248 006a 0D       		.byte	0xd
+ 249 006b 01       		.byte	0x1
+ 250 006c 30000000 		.4byte	0x30
+ 251 0070 20000000 		.4byte	.LFB1
+ 252 0074 38000000 		.4byte	.LFE1
+ 253 0078 20000000 		.4byte	.LLST1
+ 254 007c 01       		.byte	0x1
+ARM GAS  /tmp/ccQ9uJCa.s 			page 6
+
+
+ 255 007d 8F000000 		.4byte	0x8f
+ 256 0081 05       		.uleb128 0x5
+ 257 0082 637300   		.ascii	"cs\000"
+ 258 0085 01       		.byte	0x1
+ 259 0086 0D       		.byte	0xd
+ 260 0087 25000000 		.4byte	0x25
+ 261 008b 02       		.byte	0x2
+ 262 008c 91       		.byte	0x91
+ 263 008d 7C       		.sleb128 -4
+ 264 008e 00       		.byte	0
+ 265 008f 04       		.uleb128 0x4
+ 266 0090 01       		.byte	0x1
+ 267 0091 B6000000 		.4byte	.LASF2
+ 268 0095 01       		.byte	0x1
+ 269 0096 12       		.byte	0x12
+ 270 0097 01       		.byte	0x1
+ 271 0098 30000000 		.4byte	0x30
+ 272 009c 38000000 		.4byte	.LFB2
+ 273 00a0 50000000 		.4byte	.LFE2
+ 274 00a4 40000000 		.4byte	.LLST2
+ 275 00a8 01       		.byte	0x1
+ 276 00a9 BB000000 		.4byte	0xbb
+ 277 00ad 05       		.uleb128 0x5
+ 278 00ae 637300   		.ascii	"cs\000"
+ 279 00b1 01       		.byte	0x1
+ 280 00b2 12       		.byte	0x12
+ 281 00b3 25000000 		.4byte	0x25
+ 282 00b7 02       		.byte	0x2
+ 283 00b8 91       		.byte	0x91
+ 284 00b9 7C       		.sleb128 -4
+ 285 00ba 00       		.byte	0
+ 286 00bb 04       		.uleb128 0x4
+ 287 00bc 01       		.byte	0x1
+ 288 00bd 00000000 		.4byte	.LASF3
+ 289 00c1 01       		.byte	0x1
+ 290 00c2 17       		.byte	0x17
+ 291 00c3 01       		.byte	0x1
+ 292 00c4 30000000 		.4byte	0x30
+ 293 00c8 50000000 		.4byte	.LFB3
+ 294 00cc 68000000 		.4byte	.LFE3
+ 295 00d0 60000000 		.4byte	.LLST3
+ 296 00d4 01       		.byte	0x1
+ 297 00d5 E7000000 		.4byte	0xe7
+ 298 00d9 05       		.uleb128 0x5
+ 299 00da 637300   		.ascii	"cs\000"
+ 300 00dd 01       		.byte	0x1
+ 301 00de 17       		.byte	0x17
+ 302 00df 25000000 		.4byte	0x25
+ 303 00e3 02       		.byte	0x2
+ 304 00e4 91       		.byte	0x91
+ 305 00e5 7C       		.sleb128 -4
+ 306 00e6 00       		.byte	0
+ 307 00e7 04       		.uleb128 0x4
+ 308 00e8 01       		.byte	0x1
+ 309 00e9 8A000000 		.4byte	.LASF4
+ 310 00ed 01       		.byte	0x1
+ 311 00ee 1C       		.byte	0x1c
+ARM GAS  /tmp/ccQ9uJCa.s 			page 7
+
+
+ 312 00ef 01       		.byte	0x1
+ 313 00f0 30000000 		.4byte	0x30
+ 314 00f4 68000000 		.4byte	.LFB4
+ 315 00f8 80000000 		.4byte	.LFE4
+ 316 00fc 80000000 		.4byte	.LLST4
+ 317 0100 01       		.byte	0x1
+ 318 0101 13010000 		.4byte	0x113
+ 319 0105 05       		.uleb128 0x5
+ 320 0106 637300   		.ascii	"cs\000"
+ 321 0109 01       		.byte	0x1
+ 322 010a 1C       		.byte	0x1c
+ 323 010b 25000000 		.4byte	0x25
+ 324 010f 02       		.byte	0x2
+ 325 0110 91       		.byte	0x91
+ 326 0111 7C       		.sleb128 -4
+ 327 0112 00       		.byte	0
+ 328 0113 06       		.uleb128 0x6
+ 329 0114 4C010000 		.4byte	.LASF5
+ 330 0118 01       		.byte	0x1
+ 331 0119 03       		.byte	0x3
+ 332 011a 25010000 		.4byte	0x125
+ 333 011e 01       		.byte	0x1
+ 334 011f 05       		.byte	0x5
+ 335 0120 03       		.byte	0x3
+ 336 0121 00000000 		.4byte	SUCCESS
+ 337 0125 07       		.uleb128 0x7
+ 338 0126 30000000 		.4byte	0x30
+ 339 012a 06       		.uleb128 0x6
+ 340 012b 58000000 		.4byte	.LASF6
+ 341 012f 01       		.byte	0x1
+ 342 0130 04       		.byte	0x4
+ 343 0131 25010000 		.4byte	0x125
+ 344 0135 01       		.byte	0x1
+ 345 0136 05       		.byte	0x5
+ 346 0137 03       		.byte	0x3
+ 347 0138 00000000 		.4byte	BUSY
+ 348 013c 06       		.uleb128 0x6
+ 349 013d 5D000000 		.4byte	.LASF7
+ 350 0141 01       		.byte	0x1
+ 351 0142 05       		.byte	0x5
+ 352 0143 25010000 		.4byte	0x125
+ 353 0147 01       		.byte	0x1
+ 354 0148 05       		.byte	0x5
+ 355 0149 03       		.byte	0x3
+ 356 014a 00000000 		.4byte	RESOURCE
+ 357 014e 00       		.byte	0
+ 358              		.section	.debug_abbrev,"",%progbits
+ 359              	.Ldebug_abbrev0:
+ 360 0000 01       		.uleb128 0x1
+ 361 0001 11       		.uleb128 0x11
+ 362 0002 01       		.byte	0x1
+ 363 0003 25       		.uleb128 0x25
+ 364 0004 0E       		.uleb128 0xe
+ 365 0005 13       		.uleb128 0x13
+ 366 0006 0B       		.uleb128 0xb
+ 367 0007 03       		.uleb128 0x3
+ 368 0008 0E       		.uleb128 0xe
+ARM GAS  /tmp/ccQ9uJCa.s 			page 8
+
+
+ 369 0009 1B       		.uleb128 0x1b
+ 370 000a 0E       		.uleb128 0xe
+ 371 000b 11       		.uleb128 0x11
+ 372 000c 01       		.uleb128 0x1
+ 373 000d 12       		.uleb128 0x12
+ 374 000e 01       		.uleb128 0x1
+ 375 000f 10       		.uleb128 0x10
+ 376 0010 06       		.uleb128 0x6
+ 377 0011 00       		.byte	0
+ 378 0012 00       		.byte	0
+ 379 0013 02       		.uleb128 0x2
+ 380 0014 16       		.uleb128 0x16
+ 381 0015 00       		.byte	0
+ 382 0016 03       		.uleb128 0x3
+ 383 0017 0E       		.uleb128 0xe
+ 384 0018 3A       		.uleb128 0x3a
+ 385 0019 0B       		.uleb128 0xb
+ 386 001a 3B       		.uleb128 0x3b
+ 387 001b 0B       		.uleb128 0xb
+ 388 001c 49       		.uleb128 0x49
+ 389 001d 13       		.uleb128 0x13
+ 390 001e 00       		.byte	0
+ 391 001f 00       		.byte	0
+ 392 0020 03       		.uleb128 0x3
+ 393 0021 24       		.uleb128 0x24
+ 394 0022 00       		.byte	0
+ 395 0023 0B       		.uleb128 0xb
+ 396 0024 0B       		.uleb128 0xb
+ 397 0025 3E       		.uleb128 0x3e
+ 398 0026 0B       		.uleb128 0xb
+ 399 0027 03       		.uleb128 0x3
+ 400 0028 08       		.uleb128 0x8
+ 401 0029 00       		.byte	0
+ 402 002a 00       		.byte	0
+ 403 002b 04       		.uleb128 0x4
+ 404 002c 2E       		.uleb128 0x2e
+ 405 002d 01       		.byte	0x1
+ 406 002e 3F       		.uleb128 0x3f
+ 407 002f 0C       		.uleb128 0xc
+ 408 0030 03       		.uleb128 0x3
+ 409 0031 0E       		.uleb128 0xe
+ 410 0032 3A       		.uleb128 0x3a
+ 411 0033 0B       		.uleb128 0xb
+ 412 0034 3B       		.uleb128 0x3b
+ 413 0035 0B       		.uleb128 0xb
+ 414 0036 27       		.uleb128 0x27
+ 415 0037 0C       		.uleb128 0xc
+ 416 0038 49       		.uleb128 0x49
+ 417 0039 13       		.uleb128 0x13
+ 418 003a 11       		.uleb128 0x11
+ 419 003b 01       		.uleb128 0x1
+ 420 003c 12       		.uleb128 0x12
+ 421 003d 01       		.uleb128 0x1
+ 422 003e 40       		.uleb128 0x40
+ 423 003f 06       		.uleb128 0x6
+ 424 0040 9742     		.uleb128 0x2117
+ 425 0042 0C       		.uleb128 0xc
+ARM GAS  /tmp/ccQ9uJCa.s 			page 9
+
+
+ 426 0043 01       		.uleb128 0x1
+ 427 0044 13       		.uleb128 0x13
+ 428 0045 00       		.byte	0
+ 429 0046 00       		.byte	0
+ 430 0047 05       		.uleb128 0x5
+ 431 0048 05       		.uleb128 0x5
+ 432 0049 00       		.byte	0
+ 433 004a 03       		.uleb128 0x3
+ 434 004b 08       		.uleb128 0x8
+ 435 004c 3A       		.uleb128 0x3a
+ 436 004d 0B       		.uleb128 0xb
+ 437 004e 3B       		.uleb128 0x3b
+ 438 004f 0B       		.uleb128 0xb
+ 439 0050 49       		.uleb128 0x49
+ 440 0051 13       		.uleb128 0x13
+ 441 0052 02       		.uleb128 0x2
+ 442 0053 0A       		.uleb128 0xa
+ 443 0054 00       		.byte	0
+ 444 0055 00       		.byte	0
+ 445 0056 06       		.uleb128 0x6
+ 446 0057 34       		.uleb128 0x34
+ 447 0058 00       		.byte	0
+ 448 0059 03       		.uleb128 0x3
+ 449 005a 0E       		.uleb128 0xe
+ 450 005b 3A       		.uleb128 0x3a
+ 451 005c 0B       		.uleb128 0xb
+ 452 005d 3B       		.uleb128 0x3b
+ 453 005e 0B       		.uleb128 0xb
+ 454 005f 49       		.uleb128 0x49
+ 455 0060 13       		.uleb128 0x13
+ 456 0061 3F       		.uleb128 0x3f
+ 457 0062 0C       		.uleb128 0xc
+ 458 0063 02       		.uleb128 0x2
+ 459 0064 0A       		.uleb128 0xa
+ 460 0065 00       		.byte	0
+ 461 0066 00       		.byte	0
+ 462 0067 07       		.uleb128 0x7
+ 463 0068 26       		.uleb128 0x26
+ 464 0069 00       		.byte	0
+ 465 006a 49       		.uleb128 0x49
+ 466 006b 13       		.uleb128 0x13
+ 467 006c 00       		.byte	0
+ 468 006d 00       		.byte	0
+ 469 006e 00       		.byte	0
+ 470              		.section	.debug_loc,"",%progbits
+ 471              	.Ldebug_loc0:
+ 472              	.LLST0:
+ 473 0000 00000000 		.4byte	.LFB0-.Ltext0
+ 474 0004 04000000 		.4byte	.LCFI0-.Ltext0
+ 475 0008 0200     		.2byte	0x2
+ 476 000a 7D       		.byte	0x7d
+ 477 000b 00       		.sleb128 0
+ 478 000c 04000000 		.4byte	.LCFI0-.Ltext0
+ 479 0010 20000000 		.4byte	.LFE0-.Ltext0
+ 480 0014 0200     		.2byte	0x2
+ 481 0016 7D       		.byte	0x7d
+ 482 0017 10       		.sleb128 16
+ARM GAS  /tmp/ccQ9uJCa.s 			page 10
+
+
+ 483 0018 00000000 		.4byte	0
+ 484 001c 00000000 		.4byte	0
+ 485              	.LLST1:
+ 486 0020 20000000 		.4byte	.LFB1-.Ltext0
+ 487 0024 24000000 		.4byte	.LCFI1-.Ltext0
+ 488 0028 0200     		.2byte	0x2
+ 489 002a 7D       		.byte	0x7d
+ 490 002b 00       		.sleb128 0
+ 491 002c 24000000 		.4byte	.LCFI1-.Ltext0
+ 492 0030 38000000 		.4byte	.LFE1-.Ltext0
+ 493 0034 0200     		.2byte	0x2
+ 494 0036 7D       		.byte	0x7d
+ 495 0037 08       		.sleb128 8
+ 496 0038 00000000 		.4byte	0
+ 497 003c 00000000 		.4byte	0
+ 498              	.LLST2:
+ 499 0040 38000000 		.4byte	.LFB2-.Ltext0
+ 500 0044 3C000000 		.4byte	.LCFI2-.Ltext0
+ 501 0048 0200     		.2byte	0x2
+ 502 004a 7D       		.byte	0x7d
+ 503 004b 00       		.sleb128 0
+ 504 004c 3C000000 		.4byte	.LCFI2-.Ltext0
+ 505 0050 50000000 		.4byte	.LFE2-.Ltext0
+ 506 0054 0200     		.2byte	0x2
+ 507 0056 7D       		.byte	0x7d
+ 508 0057 08       		.sleb128 8
+ 509 0058 00000000 		.4byte	0
+ 510 005c 00000000 		.4byte	0
+ 511              	.LLST3:
+ 512 0060 50000000 		.4byte	.LFB3-.Ltext0
+ 513 0064 54000000 		.4byte	.LCFI3-.Ltext0
+ 514 0068 0200     		.2byte	0x2
+ 515 006a 7D       		.byte	0x7d
+ 516 006b 00       		.sleb128 0
+ 517 006c 54000000 		.4byte	.LCFI3-.Ltext0
+ 518 0070 68000000 		.4byte	.LFE3-.Ltext0
+ 519 0074 0200     		.2byte	0x2
+ 520 0076 7D       		.byte	0x7d
+ 521 0077 08       		.sleb128 8
+ 522 0078 00000000 		.4byte	0
+ 523 007c 00000000 		.4byte	0
+ 524              	.LLST4:
+ 525 0080 68000000 		.4byte	.LFB4-.Ltext0
+ 526 0084 6C000000 		.4byte	.LCFI4-.Ltext0
+ 527 0088 0200     		.2byte	0x2
+ 528 008a 7D       		.byte	0x7d
+ 529 008b 00       		.sleb128 0
+ 530 008c 6C000000 		.4byte	.LCFI4-.Ltext0
+ 531 0090 80000000 		.4byte	.LFE4-.Ltext0
+ 532 0094 0200     		.2byte	0x2
+ 533 0096 7D       		.byte	0x7d
+ 534 0097 08       		.sleb128 8
+ 535 0098 00000000 		.4byte	0
+ 536 009c 00000000 		.4byte	0
+ 537              		.section	.debug_aranges,"",%progbits
+ 538 0000 1C000000 		.4byte	0x1c
+ 539 0004 0200     		.2byte	0x2
+ARM GAS  /tmp/ccQ9uJCa.s 			page 11
+
+
+ 540 0006 00000000 		.4byte	.Ldebug_info0
+ 541 000a 04       		.byte	0x4
+ 542 000b 00       		.byte	0
+ 543 000c 0000     		.2byte	0
+ 544 000e 0000     		.2byte	0
+ 545 0010 00000000 		.4byte	.Ltext0
+ 546 0014 80000000 		.4byte	.Letext0-.Ltext0
+ 547 0018 00000000 		.4byte	0
+ 548 001c 00000000 		.4byte	0
+ 549              		.section	.debug_line,"",%progbits
+ 550              	.Ldebug_line0:
+ 551 0000 6B000000 		.section	.debug_str,"MS",%progbits,1
+ 551      02004900 
+ 551      00000201 
+ 551      FB0E0D00 
+ 551      01010101 
+ 552              	.LASF3:
+ 553 0000 4C656176 		.ascii	"LeaveCriticalSection\000"
+ 553      65437269 
+ 553      74696361 
+ 553      6C536563 
+ 553      74696F6E 
+ 554              	.LASF0:
+ 555 0015 43726561 		.ascii	"CreateCriticalSection\000"
+ 555      74654372 
+ 555      69746963 
+ 555      616C5365 
+ 555      6374696F 
+ 556              	.LASF9:
+ 557 002b 7372632F 		.ascii	"src/critical_section.c\000"
+ 557      63726974 
+ 557      6963616C 
+ 557      5F736563 
+ 557      74696F6E 
+ 558              	.LASF1:
+ 559 0042 44656C65 		.ascii	"DeleteCriticalSection\000"
+ 559      74654372 
+ 559      69746963 
+ 559      616C5365 
+ 559      6374696F 
+ 560              	.LASF6:
+ 561 0058 42555359 		.ascii	"BUSY\000"
+ 561      00
+ 562              	.LASF7:
+ 563 005d 5245534F 		.ascii	"RESOURCE\000"
+ 563      55524345 
+ 563      00
+ 564              	.LASF10:
+ 565 0066 2F686F6D 		.ascii	"/home/jun/projects/critical_section\000"
+ 565      652F6A75 
+ 565      6E2F7072 
+ 565      6F6A6563 
+ 565      74732F63 
+ 566              	.LASF4:
+ 567 008a 51756572 		.ascii	"QueryEnterCriticalSection\000"
+ 567      79456E74 
+ 567      65724372 
+ARM GAS  /tmp/ccQ9uJCa.s 			page 12
+
+
+ 567      69746963 
+ 567      616C5365 
+ 568              	.LASF11:
+ 569 00a4 43726974 		.ascii	"CriticalSection_t\000"
+ 569      6963616C 
+ 569      53656374 
+ 569      696F6E5F 
+ 569      7400
+ 570              	.LASF2:
+ 571 00b6 456E7465 		.ascii	"EnterCriticalSection\000"
+ 571      72437269 
+ 571      74696361 
+ 571      6C536563 
+ 571      74696F6E 
+ 572              	.LASF8:
+ 573 00cb 474E5520 		.ascii	"GNU C 4.8.4 20140725 (release) [ARM/embedded-4_8-br"
+ 573      4320342E 
+ 573      382E3420 
+ 573      32303134 
+ 573      30373235 
+ 574 00fe 616E6368 		.ascii	"anch revision 213147] -mcpu=arm7tdmi -marm -gdwarf-"
+ 574      20726576 
+ 574      6973696F 
+ 574      6E203231 
+ 574      33313437 
+ 575 0131 32202D4F 		.ascii	"2 -O0 -fomit-frame-pointer\000"
+ 575      30202D66 
+ 575      6F6D6974 
+ 575      2D667261 
+ 575      6D652D70 
+ 576              	.LASF5:
+ 577 014c 53554343 		.ascii	"SUCCESS\000"
+ 577      45535300 
+ 578              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.8.4 20140725 (release) [ARM/embedded-4_8-br
+ARM GAS  /tmp/ccQ9uJCa.s 			page 13
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 critical_section.c
+     /tmp/ccQ9uJCa.s:54     .rodata:00000000 SUCCESS
+     /tmp/ccQ9uJCa.s:51     .rodata:00000000 $d
+     /tmp/ccQ9uJCa.s:60     .rodata:00000004 BUSY
+     /tmp/ccQ9uJCa.s:66     .rodata:00000008 RESOURCE
+     /tmp/ccQ9uJCa.s:69     .text:00000000 $a
+     /tmp/ccQ9uJCa.s:72     .text:00000000 CreateCriticalSection
+     /tmp/ccQ9uJCa.s:101    .text:00000020 DeleteCriticalSection
+     /tmp/ccQ9uJCa.s:126    .text:00000038 EnterCriticalSection
+     /tmp/ccQ9uJCa.s:151    .text:00000050 LeaveCriticalSection
+     /tmp/ccQ9uJCa.s:176    .text:00000068 QueryEnterCriticalSection
+                     .debug_frame:00000010 $d
+
+NO UNDEFINED SYMBOLS

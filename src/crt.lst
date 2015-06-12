@@ -1,0 +1,280 @@
+ARM GAS  /tmp/ccaEVmvP.s 			page 1
+
+
+   1              	# 1 "src/crt.s"
+   1              	/****************************************************************************
+   1              	...
+   0              	
+   0              	
+   2              	*  Copyright (c) 2006 by Michael Fischer. All rights reserved.
+   3              	*
+   4              	*  Redistribution and use in source and binary forms, with or without 
+   5              	*  modification, are permitted provided that the following conditions 
+   6              	*  are met:
+   7              	*  
+   8              	*  1. Redistributions of source code must retain the above copyright 
+   9              	*     notice, this list of conditions and the following disclaimer.
+  10              	*  2. Redistributions in binary form must reproduce the above copyright
+  11              	*     notice, this list of conditions and the following disclaimer in the 
+  12              	*     documentation and/or other materials provided with the distribution.
+  13              	*  3. Neither the name of the author nor the names of its contributors may 
+  14              	*     be used to endorse or promote products derived from this software 
+  15              	*     without specific prior written permission.
+  16              	*
+  17              	*  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
+  18              	*  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+  19              	*  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
+  20              	*  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL 
+  21              	*  THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
+  22              	*  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+  23              	*  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS 
+  24              	*  OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED 
+  25              	*  AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
+  26              	*  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF 
+  27              	*  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF 
+  28              	*  SUCH DAMAGE.
+  29              	*
+  30              	****************************************************************************
+  31              	*
+  32              	*  History:
+  33              	*
+  34              	*  31.03.06  mifi   First Version
+  35              	*                   This version based on an example from Ethernut and
+  36              	*                   "ARM Cross Development with Eclipse" from James P. Lynch
+  37              	****************************************************************************/
+  38              	
+  39              	/*
+  40              	 * Some defines for the program status registers
+  41              	 */
+  42              	
+  43              	ARM_MODE_USER  = 0x10      /* Normal User Mode                             */
+  44              	ARM_MODE_FIQ   = 0x11      /* FIQ Fast Interrupts Mode                     */
+  45              	ARM_MODE_IRQ   = 0x12      /* IRQ Standard Interrupts Mode                 */
+  46              	ARM_MODE_SVC   = 0x13      /* Supervisor Interrupts Mode                   */
+  47              	ARM_MODE_ABORT = 0x17      /* Abort Processing memory Faults Mode          */
+  48              	ARM_MODE_UNDEF = 0x1B      /* Undefined Instructions Mode                  */
+  49              	ARM_MODE_SYS   = 0x1F      /* System Running in Priviledged Operating Mode */
+  50              	ARM_MODE_MASK  = 0x1F
+  51              	   
+  52              	I_BIT          = 0x80      /* disable IRQ when I bit is set */
+  53              	F_BIT          = 0x40      /* disable FIQ when F bit is set */
+ARM GAS  /tmp/ccaEVmvP.s 			page 2
+
+
+  54              	   
+  55              	/*
+  56              	 * Imports and exports
+  57              	 */
+  58              	
+  59              	.extern main
+  60              	.global _startup           /* the linker wants this symbol   */
+  61              	
+  62              	/*
+  63              	 * Startup symbol to satisfy the linker.
+  64              	 */
+  65              	
+  66              	.code 32
+  67              	.section .vectors,"ax"
+  68              	
+  69              	_startup:
+  70              	        
+  71              	/****************************************************************************/
+  72              	/*               Vector table and reset entry                               */
+  73              	/****************************************************************************/
+  74              	_vectors:
+  75 0000 18F09FE5 	    ldr pc, ResetAddr           /* Reset                 */
+  76 0004 18F09FE5 	    ldr pc, UndefAddr           /* Undefined instruction */
+  77 0008 18F09FE5 	    ldr pc, SWIAddr             /* Software interrupt    */
+  78 000c 18F09FE5 	    ldr pc, PAbortAddr          /* Prefetch abort        */
+  79 0010 18F09FE5 	    ldr pc, DAbortAddr          /* Data abort            */
+  80 0014 18F09FE5 	    ldr pc, ReservedAddr        /* Reserved              */
+  81 0018 24F09FE5 	    ldr pc, SwitchingIrqAddr    /* IRQ interrupt - calling switching handler */
+  82 001c 18F09FE5 	    ldr pc, FIQAddr             /* FIQ interrupt         */
+  83              	
+  84              	/*
+  85              	 * Literal pool for the addresses
+  86              	 */
+  87 0020 00000000 	ResetAddr:         .word ResetHandler
+  88 0024 00000000 	UndefAddr:         .word UndefHandler
+  89 0028 9C000000 	SWIAddr:           .word SWIHandler
+  90 002c 00000000 	PAbortAddr:        .word PAbortHandler
+  91 0030 00000000 	DAbortAddr:        .word DAbortHandler
+  92 0034 00000000 	ReservedAddr:      .word 0
+  93 0038 00000000 	IRQAddr:           .word IRQHandler
+  94 003c 00000000 	FIQAddr:           .word FIQHandler
+  95              	
+  96 0040 00000000 	SimpleIrqAddr:     .word SimpleIRQHandler
+  97 0044 00000000 	SwitchingIrqAddr:  .word SwitchingIRQHandler
+  98              	
+  99              	.ltorg
+ 100              	
+ 101              	.code 32
+ 102              	.section .init, "ax"
+ 103              	   
+ 104              	/****************************************************************************/
+ 105              	/*                           Reset handler                                  */
+ 106              	/****************************************************************************/
+ 107              	ResetHandler:
+ 108              	/*
+ 109              	 * Wait until the oscillator is stable.
+ 110              	 */   
+ARM GAS  /tmp/ccaEVmvP.s 			page 3
+
+
+ 111 0000 0000A0E1 	    nop
+ 112 0004 0000A0E1 	    nop
+ 113 0008 0000A0E1 	    nop
+ 114 000c 0000A0E1 	    nop
+ 115 0010 0000A0E1 	    nop
+ 116 0014 0000A0E1 	    nop
+ 117 0018 0000A0E1 	    nop
+ 118 001c 0000A0E1 	    nop
+ 119              	   
+ 120              	/*
+ 121              	 * Setup the stack for each mode.
+ 122              	 */
+ 123 0020 DBF021E3 	    msr   CPSR_c, #ARM_MODE_UNDEF | I_BIT | F_BIT   /* Undefined Instruction Mode */
+ 124 0024 84D09FE5 	    ldr   sp, =__stack_und_end
+ 125              	   
+ 126 0028 D7F021E3 	    msr   CPSR_c, #ARM_MODE_ABORT | I_BIT | F_BIT   /* Abort Mode */
+ 127 002c 80D09FE5 	    ldr   sp, =__stack_abt_end
+ 128              	   
+ 129 0030 D1F021E3 	    msr   CPSR_c, #ARM_MODE_FIQ | I_BIT | F_BIT     /* FIQ Mode */
+ 130 0034 7CD09FE5 	    ldr   sp, =__stack_fiq_end
+ 131              	   
+ 132 0038 D2F021E3 	    msr   CPSR_c, #ARM_MODE_IRQ | I_BIT | F_BIT     /* IRQ Mode */
+ 133 003c 78D09FE5 	    ldr   sp, =__stack_irq_end
+ 134              	   
+ 135 0040 D3F021E3 	    msr   CPSR_c, #ARM_MODE_SVC | I_BIT | F_BIT     /* Supervisor Mode */
+ 136 0044 74D09FE5 	    ldr   sp, =__stack_svc_end
+ 137              	
+ 138              	/* 
+ 139              	 * Copy .data section from Flash to RAM.
+ 140              	 */
+ 141 0048 74109FE5 	    ldr     r1, =_etext
+ 142 004c 74209FE5 	    ldr     r2, =__data_start
+ 143 0050 74309FE5 	    ldr     r3, =__data_end
+ 144              	copyloop:   
+ 145 0054 030052E1 	    cmp     r2, r3
+ 146 0058 04009134 	    ldrlo   r0, [r1], #4
+ 147 005c 04008234 	    strlo   r0, [r2], #4
+ 148 0060 FBFFFF3A 	    blo     copyloop
+ 149              	
+ 150              	/*
+ 151              	 * Zero out the .bss section
+ 152              	 */
+ 153 0064 64109FE5 	    ldr   r1, =__bss_start
+ 154 0068 64209FE5 	    ldr   r2, =__bss_end
+ 155 006c 0030A0E3 	    ldr   r3, =0
+ 156              	bss_clear_loop:
+ 157 0070 020051E1 	    cmp   r1, r2
+ 158 0074 04308114 	    strne r3, [r1], #+4
+ 159 0078 FCFFFF1A 	    bne   bss_clear_loop
+ 160              	   
+ 161              	/*
+ 162              	 * Turn on interrupts and jump to main.
+ 163              	 */
+ 164 007c 00000FE1 	    mrs   r0, cpsr
+ 165 0080 C000C0E3 	    bic   r0, r0, #I_BIT | F_BIT   /*   Enable FIQ and IRQ interrupt */
+ 166              	    /*bic   r0, r0, #I_BIT        Enable IRQ interrupt only */
+ 167 0084 00F029E1 	    msr   cpsr, r0
+ARM GAS  /tmp/ccaEVmvP.s 			page 4
+
+
+ 168              	   
+ 169 0088 48209FE5 	    ldr   r2, =main            /* Jump to main with no arguments */
+ 170 008c 0FE0A0E1 	    mov   lr, pc
+ 171 0090 12FF2FE1 	    bx    r2
+ 172              	                       
+ 173              	ExitFunction:
+ 174 0094 FEFFFFEA 	    b ExitFunction   
+ 175              	   
+ 176              	
+ 177              	/****************************************************************************/
+ 178              	/*                         Default interrupt handlers                       */
+ 179              	/****************************************************************************/
+ 180              	
+ 181              	UndefHandler:
+ 182 0098 FEFFFFEA 	    b UndefHandler
+ 183              	   
+ 184              	SWIHandler:
+ 185 009c FEFFFFEA 	    b SWIHandler
+ 186              	
+ 187              	PAbortHandler:
+ 188 00a0 FEFFFFEA 	    b PAbortHandler
+ 189              	
+ 190              	DAbortHandler:
+ 191 00a4 FEFFFFEA 	    b DAbortHandler
+ 192              	
+ 193              	IRQHandler:
+ 194 00a8 FEFFFFEA 	    b IRQHandler
+ 195              	   
+ 196              	FIQHandler:
+ 197 00ac FEFFFFEA 	    b FIQHandler
+ 198              	
+ 199              	   
+ 200              	.weak ExitFunction
+ 201              	.weak UndefHandler, PAbortHandler, DAbortHandler
+ 202              	.weak IRQHandler, FIQHandler
+ 203              	
+ 204 00b0 00000000 	.ltorg
+ 204      00000000 
+ 204      00000000 
+ 204      00000000 
+ 204      00000000 
+ARM GAS  /tmp/ccaEVmvP.s 			page 5
+
+
+DEFINED SYMBOLS
+           src/crt.s:43     *ABS*:00000010 ARM_MODE_USER
+           src/crt.s:44     *ABS*:00000011 ARM_MODE_FIQ
+           src/crt.s:45     *ABS*:00000012 ARM_MODE_IRQ
+           src/crt.s:46     *ABS*:00000013 ARM_MODE_SVC
+           src/crt.s:47     *ABS*:00000017 ARM_MODE_ABORT
+           src/crt.s:48     *ABS*:0000001b ARM_MODE_UNDEF
+           src/crt.s:49     *ABS*:0000001f ARM_MODE_SYS
+           src/crt.s:50     *ABS*:0000001f ARM_MODE_MASK
+           src/crt.s:52     *ABS*:00000080 I_BIT
+           src/crt.s:53     *ABS*:00000040 F_BIT
+           src/crt.s:69     .vectors:00000000 _startup
+           src/crt.s:74     .vectors:00000000 _vectors
+           src/crt.s:87     .vectors:00000020 ResetAddr
+           src/crt.s:75     .vectors:00000000 $a
+           src/crt.s:88     .vectors:00000024 UndefAddr
+           src/crt.s:89     .vectors:00000028 SWIAddr
+           src/crt.s:90     .vectors:0000002c PAbortAddr
+           src/crt.s:91     .vectors:00000030 DAbortAddr
+           src/crt.s:92     .vectors:00000034 ReservedAddr
+           src/crt.s:97     .vectors:00000044 SwitchingIrqAddr
+           src/crt.s:94     .vectors:0000003c FIQAddr
+           src/crt.s:87     .vectors:00000020 $d
+           src/crt.s:107    .init:00000000 ResetHandler
+           src/crt.s:181    .init:00000098 UndefHandler
+           src/crt.s:184    .init:0000009c SWIHandler
+           src/crt.s:187    .init:000000a0 PAbortHandler
+           src/crt.s:190    .init:000000a4 DAbortHandler
+           src/crt.s:93     .vectors:00000038 IRQAddr
+           src/crt.s:193    .init:000000a8 IRQHandler
+           src/crt.s:196    .init:000000ac FIQHandler
+           src/crt.s:96     .vectors:00000040 SimpleIrqAddr
+           src/crt.s:111    .init:00000000 $a
+           src/crt.s:144    .init:00000054 copyloop
+           src/crt.s:156    .init:00000070 bss_clear_loop
+           src/crt.s:173    .init:00000094 ExitFunction
+           src/crt.s:204    .init:000000b0 $d
+                   .debug_aranges:0000000c $d
+
+UNDEFINED SYMBOLS
+SimpleIRQHandler
+SwitchingIRQHandler
+__stack_und_end
+__stack_abt_end
+__stack_fiq_end
+__stack_irq_end
+__stack_svc_end
+_etext
+__data_start
+__data_end
+__bss_start
+__bss_end
+main
