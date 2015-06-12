@@ -32,6 +32,9 @@ switch_to_current:
                                       /* That value was the CPSR for the task. */
     msr   spsr_cxsf, r0               /* Load SPSR with that CPSR value in r0. */
 
+    ldr   r1, =cs
+    str   r1, [sp]
+
                                       /* Run task. */
     ldmfd sp!, {r0-r12, lr, pc}^      /* Pop the rest of the stack setting regs and pc for the task */
                                       /* Acts like a call the task. */
