@@ -20,7 +20,12 @@ void taskOne(CriticalSection_t cs)
 	int count = 0;
 	while(1)
 	{
-        EnterCriticalSection(cs);
+        int ret = EnterCriticalSection(cs);
+        if ( ret == 0 )
+            printString("\n ENTER 0\n\n");
+        else if ( ret == 1 )
+            printString("\n ENTER 1\n\n");
+
 		printString("task one: ");
 		print_uint32(count++);
 		printString("\n");
@@ -39,7 +44,12 @@ void taskTwo(CriticalSection_t cs)
 	int count = 0xFFFFFFFF;
 	while(1)
 	{
-        EnterCriticalSection(cs);
+        int ret = EnterCriticalSection(cs);
+        if ( ret == 0 )
+            printString("\n ENTER 0\n\n");
+        else if ( ret == 1 )
+            printString("\n ENTER 1\n\n");
+
 		printString("task two: ");
 		print_uint32(count--);
 		printString("\n");

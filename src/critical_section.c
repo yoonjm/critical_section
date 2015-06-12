@@ -17,7 +17,7 @@ int DeleteCriticalSection(CriticalSection_t cs)
 
 int EnterCriticalSection(CriticalSection_t cs)
 {
-    return 0;
+    return (int)cs;
 }
 
 int LeaveCriticalSection(CriticalSection_t cs)
